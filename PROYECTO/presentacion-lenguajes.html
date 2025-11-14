@@ -1,0 +1,2038 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistemas de Procesamiento de Lenguajes - Presentación Interactiva Avanzada</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --title-slide: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            --agenda-slide: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            --content-slide: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            --examples-slide: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            --interactive-slide: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            --conclusion-slide: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            --references-slide: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+            --thanks-slide: linear-gradient(135deg, #16a085 0%, #27ae60 100%);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --accent-color: #3498db;
+            --success-color: #2ecc71;
+            --error-color: #e74c3c;
+            --warning-color: #f39c12;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: var(--text-primary);
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: default;
+        }
+
+        body.presenter-mode {
+            background: #000;
+            filter: brightness(0.9);
+        }
+
+        body.fullscreen-mode {
+            background: #000;
+        }
+
+        .presentation-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            perspective: 1000px;
+            overflow: hidden;
+        }
+
+        /* Efectos de partículas avanzados */
+        .particles-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.6;
+        }
+
+        .particle {
+            position: absolute;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float-particle 8s infinite linear;
+        }
+
+        .particle:nth-child(odd) {
+            animation-duration: 6s;
+            animation-delay: -2s;
+        }
+
+        .particle:nth-child(3n) {
+            animation-duration: 10s;
+            animation-delay: -4s;
+        }
+
+        @keyframes float-particle {
+            0% {
+                transform: translateY(100vh) translateX(0) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100px) translateX(100px) scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* Diapositivas con efectos 3D */
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* Cambiar a flex-start para permitir scroll desde el título */
+            align-items: center;
+            background: var(--primary-bg);
+            padding: 50px 30px;
+            opacity: 0;
+            transform: translateX(100%) rotateY(15deg) scale(0.9);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            overflow-y: auto; /* Scroll vertical siempre disponible */
+            overflow-x: hidden;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0) rotateY(0deg) scale(1);
+            z-index: 3;
+        }
+
+        .slide.leaving-left {
+            transform: translateX(-120%) rotateY(-15deg) scale(0.8);
+            opacity: 0;
+        }
+
+        .slide.leaving-right {
+            transform: translateX(120%) rotateY(15deg) scale(0.8);
+            opacity: 0;
+        }
+
+        .slide.entering {
+            animation: slideEnter 0.8s ease-out;
+        }
+
+        @keyframes slideEnter {
+            0% {
+                opacity: 0;
+                transform: translateY(50px) scale(0.95);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Temas de color */
+        .title-slide { background: var(--title-slide); }
+        .agenda-slide { background: var(--agenda-slide); }
+        .content-slide { background: var(--content-slide); }
+        .examples-slide { background: var(--examples-slide); }
+        .interactive-slide { background: var(--interactive-slide); }
+        .conclusion-slide { background: var(--conclusion-slide); }
+        .references-slide { background: var(--references-slide); }
+        .thanks-slide { background: var(--thanks-slide); }
+
+        /* Contenido de diapositivas */
+        .slide-content {
+            text-align: center;
+            max-width: 1300px;
+            width: 100%;
+            z-index: 4;
+            position: relative;
+        }
+
+        /* Tipografía mejorada */
+        h1 {
+            font-size: 4em;
+            margin-bottom: 25px;
+            text-shadow: 3px 3px 8px rgba(0,0,0,0.6);
+            font-weight: 700;
+            background: linear-gradient(45deg, #fff 0%, #f0f8ff 50%, #fff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+            animation: titleGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from { filter: brightness(1) drop-shadow(0 0 5px rgba(255,255,255,0.3)); }
+            to { filter: brightness(1.1) drop-shadow(0 0 20px rgba(255,255,255,0.6)); }
+        }
+
+        h2 {
+            font-size: 2.8em;
+            margin-bottom: 35px;
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.4);
+            font-weight: 500;
+            letter-spacing: -0.5px;
+        }
+
+        h3 {
+            font-size: 2em;
+            margin: 30px 0 20px 0;
+            color: var(--text-primary);
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+            font-weight: 600;
+            position: relative;
+        }
+
+        h3::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+            border-radius: 2px;
+        }
+
+        p {
+            font-size: 1.5em;
+            line-height: 1.7;
+            margin: 18px 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            font-weight: 400;
+        }
+
+        /* Citas mejoradas */
+        .quote {
+            font-style: italic;
+            font-size: 1.4em;
+            border-left: 5px solid rgba(255,255,255,0.9);
+            padding: 25px 30px;
+            margin: 25px 0;
+            background: rgba(255,255,255,0.12);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            position: relative;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .quote::before {
+            content: '"';
+            font-size: 5em;
+            position: absolute;
+            top: -15px;
+            left: 15px;
+            opacity: 0.4;
+            font-family: 'Times New Roman', serif;
+        }
+
+        .quote em {
+            display: block;
+            margin-top: 15px;
+            font-size: 0.9em;
+            opacity: 0.8;
+            font-style: normal;
+        }
+
+        /* Listas mejoradas */
+        .list {
+            text-align: left;
+            display: inline-block;
+            margin: 25px 0;
+            width: 100%;
+        }
+
+        .list-item {
+            font-size: 1.3em;
+            margin: 12px 0;
+            padding: 12px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            position: relative;
+            padding-left: 40px;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .list-item:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateX(5px);
+        }
+
+        .list-item::before {
+            content: "▶";
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent-color);
+            transition: all 0.3s ease;
+            font-size: 0.8em;
+        }
+
+        .list-item:hover::before {
+            color: var(--success-color);
+            transform: translateY(-50%) scale(1.2);
+        }
+
+        /* Elementos destacados */
+        .highlight {
+            background: rgba(255,255,255,0.18);
+            padding: 20px 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border: 2px solid rgba(255,255,255,0.3);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+
+        /* Bloques de código mejorados */
+        .code-block {
+            background: rgba(0,0,0,0.85);
+            padding: 25px;
+            border-radius: 12px;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 1em;
+            text-align: left;
+            margin: 25px 0;
+            white-space: pre-wrap;
+            border: 2px solid rgba(255,255,255,0.2);
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            overflow-x: auto;
+        }
+
+        .code-block::before {
+            content: "💻";
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            opacity: 0.6;
+            font-size: 1.2em;
+        }
+
+        .code-block::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .code-block::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+        }
+
+        .code-block::-webkit-scrollbar-thumb {
+            background: var(--accent-color);
+            border-radius: 3px;
+        }
+
+        /* Diagramas */
+        .diagram {
+            background: rgba(255,255,255,0.98);
+            color: #2c3e50;
+            padding: 25px;
+            border-radius: 12px;
+            font-family: 'Fira Code', monospace;
+            font-size: 1.1em;
+            text-align: left;
+            margin: 25px 0;
+            white-space: pre-wrap;
+            border: 2px solid rgba(0,0,0,0.1);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        /* Elementos interactivos */
+        .interactive-demo {
+            background: rgba(0,0,0,0.9);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 2px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            position: relative;
+        }
+
+        .interactive-demo::before {
+            content: "🎮";
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            opacity: 0.7;
+            font-size: 1.5em;
+        }
+
+        .demo-input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255,255,255,0.08);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            color: white;
+            font-family: 'Fira Code', monospace;
+            font-size: 1em;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            resize: vertical;
+        }
+
+        .demo-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            background: rgba(255,255,255,0.12);
+            box-shadow: 0 0 20px rgba(52, 152, 219, 0.3);
+        }
+
+        .demo-button {
+            background: linear-gradient(135deg, var(--accent-color), #2980b9);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            color: white;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .demo-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
+        }
+
+        .demo-button:active {
+            transform: translateY(0);
+        }
+
+        .demo-output {
+            background: rgba(0,0,0,0.95);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-family: 'Fira Code', monospace;
+            white-space: pre-wrap;
+            min-height: 60px;
+            border: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.9em;
+            overflow-x: auto;
+        }
+
+        /* Quiz interactivo */
+        .quiz-container {
+            background: rgba(255,255,255,0.1);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .quiz-question {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .quiz-option {
+            display: block;
+            background: rgba(255,255,255,0.08);
+            border: 2px solid rgba(255,255,255,0.2);
+            padding: 15px 20px;
+            margin: 8px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 1.1em;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quiz-option:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateX(5px);
+        }
+
+        .quiz-option.selected {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.4), rgba(41, 128, 185, 0.6));
+            border-color: #3498db;
+            border-width: 3px;
+            transform: translateX(10px) scale(1.02);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .quiz-option.selected::before {
+            content: "✓";
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5em;
+            color: #ffffff;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255,255,255,0.8);
+        }
+
+        .quiz-option.correct {
+            background: rgba(46, 204, 113, 0.3);
+            border-color: var(--success-color);
+            color: var(--success-color);
+        }
+
+        .quiz-option.incorrect {
+            background: rgba(231, 76, 60, 0.3);
+            border-color: var(--error-color);
+            color: var(--error-color);
+        }
+
+        .quiz-feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .quiz-feedback.success {
+            background: rgba(46, 204, 113, 0.2);
+            color: var(--success-color);
+        }
+
+        .quiz-feedback.error {
+            background: rgba(231, 76, 60, 0.2);
+            color: var(--error-color);
+        }
+
+        /* Temporizador mejorado */
+        .timer-container {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            background: rgba(0,0,0,0.9);
+            padding: 15px 20px;
+            border-radius: 12px;
+            font-family: 'Fira Code', monospace;
+            z-index: 1000;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            display: none;
+        }
+
+        .timer-display {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: var(--accent-color);
+            text-align: center;
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .timer-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: all 0.3s ease;
+        }
+
+        .timer-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Navegación mejorada */
+        .navigation {
+            position: fixed;
+            bottom: 35px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            display: flex;
+            gap: 20px;
+            background: rgba(0,0,0,0.9);
+            padding: 18px 25px;
+            border-radius: 30px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 14px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            min-width: 130px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .nav-btn:hover::before {
+            left: 100%;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        /* Controles adicionales */
+        .controls-panel {
+            position: fixed;
+            top: 25px;
+            left: 25px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .control-btn {
+            background: rgba(0,0,0,0.9);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .control-btn:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Indicador de diapositiva mejorado */
+        .slide-indicator {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: rgba(0,0,0,0.9);
+            padding: 12px 18px;
+            border-radius: 20px;
+            font-family: 'Fira Code', monospace;
+            z-index: 1000;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+        }
+
+        .slide-number {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+
+        /* Barra de progreso */
+        .progress-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            z-index: 1000;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-color), var(--success-color));
+            width: 0%;
+            transition: width 0.8s ease;
+            box-shadow: 0 0 10px var(--accent-color);
+        }
+
+        /* Modo pantalla completa */
+        .fullscreen-btn {
+            position: fixed;
+            top: 25px;
+            right: 120px;
+            z-index: 1000;
+        }
+
+        .slide.hidden-in-overview {
+            display: none !important;
+        }
+
+        /* Vista general */
+        .overview-mode {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            padding: 30px;
+            overflow-y: auto;
+            max-height: 100vh;
+        }
+
+        .overview-grid {
+            display: contents; /* Hace que el grid se aplique al contenedor padre */
+        }
+
+        .overview-slide {
+            height: 120px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9em;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+        }
+
+        .overview-slide:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.8em; }
+            h2 { font-size: 2.2em; }
+            h3 { font-size: 1.6em; }
+            p { font-size: 1.3em; }
+            .slide { padding: 30px 20px; }
+            .navigation { bottom: 25px; padding: 12px 20px; }
+            .nav-btn { padding: 10px 18px; min-width: 100px; font-size: 0.9em; }
+            .controls-panel { top: 15px; left: 15px; }
+            .timer-container { top: 15px; right: 15px; }
+            .slide-indicator { bottom: 15px; right: 15px; }
+        }
+
+        /* Animaciones de entrada escalonadas */
+        .slide.active .list-item {
+            animation: listItemEnter 0.6s ease-out both;
+        }
+
+        .slide.active .list-item:nth-child(1) { animation-delay: 0.2s; }
+        .slide.active .list-item:nth-child(2) { animation-delay: 0.3s; }
+        .slide.active .list-item:nth-child(3) { animation-delay: 0.4s; }
+        .slide.active .list-item:nth-child(4) { animation-delay: 0.5s; }
+        .slide.active .list-item:nth-child(5) { animation-delay: 0.6s; }
+        .slide.active .list-item:nth-child(6) { animation-delay: 0.7s; }
+        .slide.active .list-item:nth-child(7) { animation-delay: 0.8s; }
+        .slide.active .list-item:nth-child(8) { animation-delay: 0.9s; }
+
+        @keyframes listItemEnter {
+            0% {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                transform: translateX(-50%) scale(1);
+            }
+            50% {
+                opacity: 0.7;
+                transform: translateX(-50%) scale(1.05);
+            }
+        }
+
+        /* Scrollbar personalizada */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--accent-color), var(--success-color));
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, var(--success-color), var(--accent-color));
+        }
+
+        /* Scroll específico para diapositivas */
+        .slide::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .slide::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+
+        .slide::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+        }
+
+        .slide::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Partículas de fondo -->
+        <div class="particles-container" id="particles"></div>
+
+        <!-- Barra de progreso -->
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <!-- Controles -->
+        <div class="controls-panel">
+            <button class="control-btn" onclick="togglePresenterMode()">👤 Modo Presentador</button>
+            <button class="control-btn" onclick="toggleTimer()">⏱️ Temporizador</button>
+            <button class="control-btn" onclick="toggleOverview()">📋 Vista General</button>
+        </div>
+
+
+
+        <!-- Temporizador -->
+        <div class="timer-container" id="timer">
+            <div class="timer-display" id="timeDisplay">12:00</div>
+            <div class="timer-controls">
+                <button class="timer-btn" onclick="startTimer()">▶️ Iniciar</button>
+                <button class="timer-btn" onclick="pauseTimer()">⏸️ Pausar</button>
+                <button class="timer-btn" onclick="resetTimer()">🔄 Reiniciar</button>
+            </div>
+        </div>
+
+        <!-- Indicador de diapositiva -->
+        <div class="slide-indicator">
+            <span class="slide-number" id="currentSlideNum">1</span>/<span id="totalSlidesNum">17</span>
+        </div>
+
+        <!-- Diapositiva 1: Carátula -->
+        <div class="slide title-slide active" id="slide1">
+            <div class="slide-content">
+                <h1>SISTEMAS DE PROCESAMIENTO DE LENGUAJES</h1>
+                <h2>Ingeniería de Software Avanzada</h2>
+                <p>Basado en: Ian Sommerville - Ingeniería de Software</p>
+                <div class="highlight">
+                    <p><strong>Autor:</strong> Israel David Velasquez Gonzales</p>
+                    <p><strong>Curso:</strong> [2025-2] INGENIERÍA DE SOFTWARE AVANZADA [5305A]</p>
+                    <p><strong>Fecha:</strong> Octubre 2025</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 2: Agenda -->
+        <div class="slide agenda-slide" id="slide2">
+            <div class="slide-content">
+                <h2>AGENDA DE LA PRESENTACIÓN</h2>
+                <div class="list">
+                    <div class="list-item">1. Introducción a los Sistemas de Procesamiento de Lenguajes</div>
+                    <div class="list-item">2. Características Principales</div>
+                    <div class="list-item">3. Tipos y Ejemplos</div>
+                    <div class="list-item">4. Arquitectura y Componentes</div>
+                    <div class="list-item">5. Aplicaciones en el Mundo Real</div>
+                    <div class="list-item">6. Demo Interactiva: Mini-Compilador</div>
+                    <div class="list-item">7. Demo Interactiva: Procesamiento SQL</div>
+                    <div class="list-item">8. Quiz Interactivo</div>
+                    <div class="list-item">9. Conclusiones</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 3: Introducción -->
+        <div class="slide content-slide" id="slide3">
+            <div class="slide-content">
+                <h2>¿QUÉ SON LOS SISTEMAS DE PROCESAMIENTO DE LENGUAJES?</h2>
+                <div class="quote">
+                    "Los sistemas de procesamiento de lenguajes son sistemas en los que las intenciones del usuario se expresan en un lenguaje formal."
+                    <br><br>
+                    <em>Ian Sommerville - Ingeniería de Software</em>
+                </div>
+                <h3>Característica Principal:</h3>
+                <div class="list">
+                    <div class="list-item"><strong>Lenguaje Formal:</strong> Sintaxis y semántica bien definidas</div>
+                    <div class="list-item"><strong>Procesamiento Automatizado:</strong> Interpretación o traducción automática</div>
+                    <div class="list-item"><strong>Entrada del Usuario:</strong> Expresada en lenguaje específico del dominio</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 4: Características Principales -->
+        <div class="slide content-slide" id="slide4">
+            <div class="slide-content">
+                <h2>CARACTERÍSTICAS FUNDAMENTALES</h2>
+                <h3>1. Lenguaje Formal Definido</h3>
+                <div class="list">
+                    <div class="list-item">Sintaxis estricta y reglas gramaticales</div>
+                    <div class="list-item">Semántica precisa y no ambigua</div>
+                    <div class="list-item">Vocabulario limitado y específico</div>
+                </div>
+                <h3>2. Procesamiento Sistemático</h3>
+                <div class="list">
+                    <div class="list-item">Análisis léxico, sintáctico y semántico</div>
+                    <div class="list-item">Transformación o interpretación de entrada</div>
+                    <div class="list-item">Generación de salida estructurada</div>
+                </div>
+                <h3>3. Abstracción de Complejidad</h3>
+                <div class="list">
+                    <div class="list-item">Oculta detalles de implementación</div>
+                    <div class="list-item">Proporciona interfaz de alto nivel</div>
+                    <div class="list-item">Facilita interacción humano-máquina</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 5: Ejemplos Clásicos -->
+        <div class="slide examples-slide" id="slide5">
+            <div class="slide-content">
+                <h2>EJEMPLOS MÁS CONOCIDOS</h2>
+                <h3>1. COMPILADORES</h3>
+                <div class="code-block">
+Código Fuente (Java) → Compilador → Código Máquina
+                </div>
+                <div class="list">
+                    <div class="list-item"><strong>Función:</strong> Traducen lenguajes de alto nivel a código ejecutable</div>
+                    <div class="list-item"><strong>Proceso:</strong> Análisis → Optimización → Generación de código</div>
+                    <div class="list-item"><strong>Ejemplo:</strong> javac compila Java a bytecode</div>
+                </div>
+                <h3>2. INTÉRPRETES</h3>
+                <div class="code-block">
+Código Fuente → Intérprete → Ejecución Inmediata
+                </div>
+                <div class="list">
+                    <div class="list-item"><strong>Función:</strong> Ejecutan código directamente sin compilación previa</div>
+                    <div class="list-item"><strong>Ventaja:</strong> Desarrollo interactivo y rápido</div>
+                    <div class="list-item"><strong>Ejemplo:</strong> Python interpreter</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 6: Demo Interactiva de Compilador -->
+        <div class="slide interactive-slide" id="slide6">
+            <div class="slide-content">
+                <h2>🎮 DEMO INTERACTIVA: MINI-COMPILADOR</h2>
+                <div class="interactive-demo">
+                    <h3>Prueba un lenguaje simple:</h3>
+                    <textarea id="codeInput" class="demo-input" rows="8" placeholder="Escribe código simple...
+Ejemplos:
+var x = 5;
+var y = 10;
+var suma = x + y;
+print(suma);
+
+var nombre = 'Israel';
+print('Hola ' + nombre);"></textarea>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="demo-button" onclick="compileCode()">🚀 Compilar y Ejecutar</button>
+                        <button class="demo-button" onclick="clearDemo()">🗑️ Limpiar</button>
+                        <button class="demo-button" onclick="loadExample(1)">📝 Ejemplo 1</button>
+                        <button class="demo-button" onclick="loadExample(2)">📝 Ejemplo 2</button>
+                    </div>
+                    <div id="output" class="demo-output">Resultado aparecerá aquí...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 7: Otros Tipos de Sistemas -->
+        <div class="slide examples-slide" id="slide7">
+            <div class="slide-content">
+                <h2>APLICACIONES ADICIONALES</h2>
+                <h3>3. Lenguajes de Consulta de Bases de Datos</h3>
+                <div class="code-block">
+SELECT nombre FROM usuarios WHERE edad > 18
+                </div>
+                <div class="list">
+                    <div class="list-item"><strong>SQL Processors:</strong> Interpretan consultas y generan planes de ejecución</div>
+                    <div class="list-item"><strong>Función:</strong> Traducen consultas declarativas a operaciones de bajo nivel</div>
+                </div>
+                <h3>4. Sistemas de Información</h3>
+                <div class="list">
+                    <div class="list-item"><strong>Lenguajes de comandos:</strong> Para gestión de sistemas</div>
+                    <div class="list-item"><strong>Scripts de automatización:</strong> Bash, PowerShell</div>
+                    <div class="list-item"><strong>Configuración declarativa:</strong> YAML, JSON schemas</div>
+                </div>
+                <h3>5. Lenguajes de Marcado</h3>
+                <div class="code-block">
+&lt;usuario id="123"&gt;
+    &lt;nombre&gt;Israel&lt;/nombre&gt;
+    &lt;email&gt;israel@email.com&lt;/email&gt;
+&lt;/usuario&gt;
+                </div>
+                <div class="list">
+                    <div class="list-item"><strong>XML/HTML Processors:</strong> Validan y transforman documentos</div>
+                    <div class="list-item"><strong>Función:</strong> Parsing y manipulación de estructuras de datos</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 8: Arquitectura Típica -->
+        <div class="slide content-slide" id="slide8">
+            <div class="slide-content">
+                <h2>COMPONENTES DE UN SISTEMA DE PROCESAMIENTO</h2>
+                <h3>Fases del Procesamiento:</h3>
+                <div class="list">
+                    <div class="list-item"><strong>1. Análisis Léxico (Scanner):</strong> Divide entrada en tokens básicos</div>
+                    <div class="list-item"><strong>2. Análisis Sintáctico (Parser):</strong> Verifica estructura gramatical</div>
+                    <div class="list-item"><strong>3. Análisis Semántico:</strong> Verifica significado y consistencia</div>
+                    <div class="list-item"><strong>4. Generación/Interpretación:</strong> Produce salida final</div>
+                </div>
+                <h3>Herramientas:</h3>
+                <div class="list">
+                    <div class="list-item"><strong>Lexers:</strong> Generadores de lexers (Lex, Flex)</div>
+                    <div class="list-item"><strong>Parsers:</strong> Generadores de parsers (Yacc, Bison)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 9: Arquitectura Visual -->
+        <div class="slide content-slide" id="slide9">
+            <div class="slide-content">
+                <h2>ARQUITECTURA DE UN COMPILADOR TÍPICO</h2>
+                <div class="diagram">
+[ Código Fuente ]
+       ↓
+   Análisis Léxico
+   (Scanner/Tokenizador)
+       ↓
+   Análisis Sintáctico
+   (Parser/Árbol Sintáctico)
+       ↓
+   Análisis Semántico
+   (Verificación de Tipos)
+       ↓
+   Optimización
+   (Mejora de Código)
+       ↓
+   Generación de Código
+   (Código Ejecutable)
+                </div>
+                <h3>Componentes Adicionales:</h3>
+                <div class="list">
+                    <div class="list-item"><strong>Tabla de Símbolos:</strong> Gestión de identificadores</div>
+                    <div class="list-item"><strong>Gestor de Errores:</strong> Reporte de problemas</div>
+                    <div class="list-item"><strong>Gestor de Memoria:</strong> Administración de recursos</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 10: Demo de SQL -->
+        <div class="slide interactive-slide" id="slide10">
+            <div class="slide-content">
+                <h2>🎮 DEMO INTERACTIVA: PROCESAMIENTO SQL</h2>
+                <div class="interactive-demo">
+                    <h3>Base de datos de ejemplo:</h3>
+                    <div class="code-block" style="font-size: 0.9em;">
+usuarios:
+- id: 1, nombre: "Ana", edad: 25, ciudad: "Bogota"
+- id: 2, nombre: "Carlos", edad: 30, ciudad: "Medellin"
+- id: 3, nombre: "Maria", edad: 22, ciudad: "Bogota"
+- id: 4, nombre: "Pedro", edad: 35, ciudad: "Cali"
+- id: 5, nombre: "Laura", edad: 28, ciudad: "Bogota"
+- id: 6, nombre: "Juan", edad: 33, ciudad: "Medellin"
+                    </div>
+                    <h3>Escribe tu consulta SQL:</h3>
+                    <textarea id="sqlInput" class="demo-input" rows="4" placeholder="Ejemplos:
+SELECT nombre FROM usuarios WHERE edad > 24
+SELECT * FROM usuarios WHERE ciudad = 'Bogota'
+SELECT nombre, edad FROM usuarios ORDER BY edad"></textarea>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="demo-button" onclick="executeSQL()">🔍 Ejecutar Consulta</button>
+                        <button class="demo-button" onclick="clearSQLDemo()">🗑️ Limpiar</button>
+                        <button class="demo-button" onclick="loadSQLExample(1)">📝 SELECT Básico</button>
+                        <button class="demo-button" onclick="loadSQLExample(2)">📝 WHERE Ciudad</button>
+                        <button class="demo-button" onclick="loadSQLExample(3)">📝 ORDER BY</button>
+                        <button class="demo-button" onclick="loadSQLExample(4)">📝 WHERE Nombre</button>
+                    </div>
+                    <div id="sqlOutput" class="demo-output">Resultado aparecerá aquí...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 11: Aplicaciones en el Mundo Real -->
+        <div class="slide examples-slide" id="slide11">
+            <div class="slide-content">
+                <h2>APLICACIONES PRÁCTICAS</h2>
+                <h3>1. Desarrollo de Software</h3>
+                <div class="list">
+                    <div class="list-item"><strong>Compiladores:</strong> Java, C++, Python</div>
+                    <div class="list-item"><strong>Frameworks:</strong> Procesan templates (JSP, Razor)</div>
+                    <div class="list-item"><strong>Herramientas de Build:</strong> Maven, Gradle interpretan scripts</div>
+                </div>
+                <h3>2. Bases de Datos</h3>
+                <div class="list">
+                    <div class="list-item"><strong>Motores SQL:</strong> Procesan consultas complejas</div>
+                    <div class="list-item"><strong>ORMs:</strong> Traducen objetos a SQL (Entity Framework, Hibernate)</div>
+                    <div class="list-item"><strong>Migraciones:</strong> Interpretan cambios de esquema</div>
+                </div>
+                <h3>3. Web y Servicios</h3>
+                <div class="list">
+                    <div class="list-item"><strong>APIs REST:</strong> Procesan JSON/XML payloads</div>
+                    <div class="list-item"><strong>GraphQL:</strong> Interpreta queries declarativas</div>
+                    <div class="list-item"><strong>Configuración:</strong> YAML processors en Kubernetes</div>
+                </div>
+                <h3>4. Automatización</h3>
+                <div class="list">
+                    <div class="list-item"><strong>CI/CD Pipelines:</strong> Interpretan scripts de deployment</div>
+                    <div class="list-item"><strong>Herramientas de Configuración:</strong> Ansible, Terraform</div>
+                    <div class="list-item"><strong>Sistemas de Monitoreo:</strong> Procesan reglas de alertas</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 12: Quiz Interactivo -->
+        <div class="slide interactive-slide" id="slide12">
+            <div class="slide-content">
+                <h2>🧠 QUIZ INTERACTIVO</h2>
+                <h3>¿Cuál es la diferencia principal entre un compilador y un intérprete?</h3>
+                <p style="font-size: 1.1em; margin-bottom: 15px; color: rgba(255,255,255,0.8);"><em>Selecciona todas las respuestas correctas:</em></p>
+                <div class="quiz-container">
+                    <div class="quiz-option" onclick="toggleQuizSelection(this)" data-correct="true">Un compilador traduce todo el código antes de ejecutarlo</div>
+                    <div class="quiz-option" onclick="toggleQuizSelection(this)" data-correct="true">Un intérprete ejecuta el código línea por línea</div>
+                    <div class="quiz-option" onclick="toggleQuizSelection(this)" data-correct="false">Los compiladores son más lentos que los intérpretes</div>
+                    <div class="quiz-option" onclick="toggleQuizSelection(this)" data-correct="false">Los intérpretes no generan código máquina</div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button class="demo-button" onclick="checkMultipleAnswers()">✅ Verificar Respuestas</button>
+                    <button class="demo-button" onclick="resetQuiz()">🔄 Reiniciar Quiz</button>
+                </div>
+                <div id="quizFeedback" class="quiz-feedback" style="display: none;"></div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 13: Sistemas Más Adecuados -->
+        <div class="slide content-slide" id="slide13">
+            <div class="slide-content">
+                <h2>¿CUÁNDO USAR SISTEMAS DE PROCESAMIENTO DE LENGUAJES?</h2>
+                <h3>Situaciones Ideales:</h3>
+                <div class="list">
+                    <div class="list-item"><strong>1. Dominios Complejos con Reglas Formales</strong></div>
+                    <div class="list-item"><strong>2. Necesidad de Abstracción</strong></div>
+                    <div class="list-item"><strong>3. Procesamiento Masivo</strong></div>
+                    <div class="list-item"><strong>4. Colaboración Multi-usuario</strong></div>
+                </div>
+                <h3>Ejemplos Específicos:</h3>
+                <div class="list">
+                    <div class="list-item"><strong>Finanzas:</strong> Lenguajes de trading algorítmico</div>
+                    <div class="list-item"><strong>Medicina:</strong> Procesamiento de prescripciones electrónicas</div>
+                    <div class="list-item"><strong>Legal:</strong> Contratos inteligentes en blockchain</div>
+                    <div class="list-item"><strong>DevOps:</strong> Infrastructure as Code (Terraform, Ansible)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 14: Ventajas y Desafíos -->
+        <div class="slide content-slide" id="slide14">
+            <div class="slide-content">
+                <h2>VENTAJAS Y DESAFÍOS</h2>
+                <h3>Beneficios Principales:</h3>
+                <div class="list">
+                    <div class="list-item"><strong>Abstracción:</strong> Oculta complejidad del sistema subyacente</div>
+                    <div class="list-item"><strong>Productividad:</strong> Desarrollo más rápido y menos propenso a errores</div>
+                    <div class="list-item"><strong>Mantenibilidad:</strong> Cambios en lógica sin afectar usuarios</div>
+                    <div class="list-item"><strong>Extensibilidad:</strong> Nuevas funcionalidades mediante extensión del lenguaje</div>
+                    <div class="list-item"><strong>Reutilización:</strong> Componentes reutilizables en diferentes contextos</div>
+                </div>
+                <h3>Dificultades Comunes:</h3>
+                <div class="list">
+                    <div class="list-item"><strong>Complejidad de Implementación:</strong> Desarrollo de parsers complejos</div>
+                    <div class="list-item"><strong>Curva de Aprendizaje:</strong> Usuarios deben aprender sintaxis específica</div>
+                    <div class="list-item"><strong>Debugging Difícil:</strong> Errores en procesamiento pueden ser crípticos</div>
+                    <div class="list-item"><strong>Mantenimiento:</strong> Evolución del lenguaje requiere actualizaciones</div>
+                    <div class="list-item"><strong>Performance:</strong> Overhead de interpretación vs compilación directa</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 15: Conclusiones -->
+        <div class="slide conclusion-slide" id="slide15">
+            <div class="slide-content">
+                <h2>CONCLUSIONES</h2>
+                <h3>Importancia en Ingeniería de Software:</h3>
+                <div class="list">
+                    <div class="list-item"><strong>Habilitadores de Abstracción:</strong> Permiten expresar conceptos complejos de manera declarativa</div>
+                    <div class="list-item"><strong>Facilitadores de Automatización:</strong> Convierten tareas manuales en procesos automatizados</div>
+                    <div class="list-item"><strong>Impulsores de Productividad:</strong> Reducen tiempo de desarrollo y errores humanos</div>
+                    <div class="list-item"><strong>Enablers de Escalabilidad:</strong> Permiten crecimiento de sistemas sin complejidad proporcional</div>
+                </div>
+                <h3>Tendencias Futuras:</h3>
+                <div class="list">
+                    <div class="list-item"><strong>DSL (Domain-Specific Languages):</strong> Lenguajes especializados por dominio</div>
+                    <div class="list-item"><strong>Low-Code/No-Code:</strong> Interfaces visuales que generan lenguajes</div>
+                    <div class="list-item"><strong>IA-Enhanced:</strong> Procesamiento inteligente de lenguajes naturales</div>
+                    <div class="list-item"><strong>Edge Computing:</strong> Procesamiento distribuido de lenguajes</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diapositiva 16: Referencias -->
+        <div class="slide references-slide" id="slide16">
+            <div class="slide-content">
+                <h2>REFERENCIAS</h2>
+                <h3>Bibliografía Principal:</h3>
+                <div class="list">
+                    <div class="list-item"><strong>Sommerville, I.</strong> (2016). <em>Ingeniería de Software</em> (10ma edición). Pearson.</div>
+                </div>
+                <h3>Referencias Adicionales:</h3>
+                <div class="list">
+                    <div class="list-item"><strong>Aho, A. V., Sethi, R., & Ullman, J. D.</strong> (1986). <em>Compilers: Principles, Techniques, and Tools</em>. Addison-Wesley.</div>
+                    <div class="list-item"><strong>Grune, D., & Jacobs, C. J.</strong> (2008). <em>Parsing Techniques: A Practical Guide</em>. Springer.</div>
+                    <div class="list-item"><strong>Fowler, M.</strong> (2010). <em>Domain-Specific Languages</em>. Addison-Wesley.</div>
+                </div>
+                <h3>Recursos Web:</h3>
+                <div class="list">
+                    <div class="list-item"><strong>Dragon Book:</strong> https://suif.stanford.edu/dragonbook/</div>
+                    <div class="list-item"><strong>ANTLR:</strong> https://www.antlr.org/</div>
+                    <div class="list-item"><strong>IEEE Computer Society:</strong> Artículos sobre compiladores</div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="slide thanks-slide" id="slide17">
+            <div class="slide-content">
+                <h1>¡GRACIAS POR SU ATENCIÓN!</h1>
+                <h2>PREGUNTAS Y COMENTARIOS</h2>
+                <div class="highlight">
+                    <p><strong>Israel David Velasquez Gonzales</strong></p>
+                </div>
+                <div class="quote">
+                    "Los sistemas de procesamiento de lenguajes son los puentes invisibles que permiten la comunicación efectiva entre humanos y máquinas."
+                </div>
+            </div>
+        </div>
+
+
+        <div class="navigation">
+            <button class="nav-btn" onclick="previousSlide()">← Anterior</button>
+            <button class="nav-btn" onclick="nextSlide()">Siguiente →</button>
+            <button class="nav-btn" onclick="goToSlide(1)">🏠 Inicio</button>
+            <button class="nav-btn" onclick="toggleOverview()">📋 Vista General</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 17;
+        let timerInterval;
+        let timeRemaining = 12 * 60;
+        let isTimerRunning = false;
+        let isPresenterMode = false;
+        let isOverviewMode = false;
+        let particles = [];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            setupKeyboardControls();
+            showSlide(1); 
+            updateSlideIndicator();
+            updateProgressBar();
+        });
+
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            for (let i = 0; i < 80; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.width = Math.random() * 6 + 1 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.animationDelay = Math.random() * 8 + 's';
+                particle.style.animationDuration = (Math.random() * 6 + 8) + 's';
+                particlesContainer.appendChild(particle);
+                particles.push(particle);
+            }
+        }
+
+        function setupKeyboardControls() {
+            document.addEventListener('keydown', function(event) {
+                if (isOverviewMode) return; 
+
+                switch(event.key) {
+                    case 'ArrowRight':
+                    case ' ':
+                        event.preventDefault();
+                        nextSlide();
+                        break;
+                    case 'ArrowLeft':
+                        event.preventDefault();
+                        previousSlide();
+                        break;
+                    case 'Home':
+                        event.preventDefault();
+                        goToSlide(1);
+                        break;
+                    case 'End':
+                        event.preventDefault();
+                        goToSlide(totalSlides);
+                        break;
+                    case 'PageDown':
+                        event.preventDefault();
+                        const currentSlideEl = document.getElementById(`slide${currentSlide}`);
+                        if (currentSlideEl) {
+                            currentSlideEl.scrollBy(0, 200);
+                        }
+                        break;
+                    case 'PageUp':
+                        event.preventDefault();
+                        const currentSlideEl2 = document.getElementById(`slide${currentSlide}`);
+                        if (currentSlideEl2) {
+                            currentSlideEl2.scrollBy(0, -200);
+                        }
+                        break;
+                    case 'f':
+                    case 'F':
+                        if (event.ctrlKey || event.metaKey) {
+                            event.preventDefault();
+                            toggleFullscreen();
+                        }
+                        break;
+                    case 'Escape':
+                        if (document.fullscreenElement) {
+                            document.exitFullscreen();
+                        }
+                        break;
+                    case 't':
+                    case 'T':
+                        event.preventDefault();
+                        toggleTimer();
+                        break;
+                    case 'p':
+                    case 'P':
+                        event.preventDefault();
+                        togglePresenterMode();
+                        break;
+                }
+            });
+
+            let scrollTimeout;
+            document.addEventListener('wheel', function(event) {
+                if (isOverviewMode) return;
+
+                const currentSlideEl = document.getElementById(`slide${currentSlide}`);
+                if (!currentSlideEl) return;
+                const hasScrollableContent = currentSlideEl.scrollHeight > currentSlideEl.clientHeight + 10;
+
+                if (hasScrollableContent) {
+                    return;
+                }
+
+                event.preventDefault();
+                event.stopPropagation();
+                return false;
+            }, { passive: false });
+        }
+
+        function showSlide(slideNumber, direction = 'forward') {
+            if (isOverviewMode) return;
+
+            // Si ya estamos en la diapositiva deseada, no hacer nada
+            if (currentSlide === slideNumber) return;
+
+            // Ocultar todas las diapositivas
+            for (let i = 1; i <= totalSlides; i++) {
+                const slide = document.getElementById(`slide${i}`);
+                if (slide) {
+                    slide.classList.remove('active');
+                }
+            }
+
+            // Mostrar la diapositiva actual
+            const currentSlideElement = document.getElementById(`slide${slideNumber}`);
+            if (currentSlideElement) {
+                currentSlideElement.classList.add('active');
+                // Scroll al inicio de la diapositiva
+                currentSlideElement.scrollTop = 0;
+
+                // Verificar si esta diapositiva necesita ajustes de scroll
+                checkSlideForScroll(currentSlideElement);
+            }
+
+            currentSlide = slideNumber;
+            updateSlideIndicator();
+            updateProgressBar();
+
+            // Reset quiz si es la diapositiva del quiz
+            if (slideNumber === 12) {
+                resetQuiz();
+            }
+        }
+
+        let isNavigating = false; // Flag para prevenir navegación duplicada
+
+        function nextSlide() {
+            if (currentSlide < totalSlides && !isOverviewMode && !isNavigating) {
+                isNavigating = true;
+                showSlide(currentSlide + 1, 'forward');
+                setTimeout(() => { isNavigating = false; }, 300); // Reset flag después de 300ms
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 1 && !isOverviewMode && !isNavigating) {
+                isNavigating = true;
+                showSlide(currentSlide - 1, 'backward');
+                setTimeout(() => { isNavigating = false; }, 300); // Reset flag después de 300ms
+            }
+        }
+
+        function goToSlide(slideNumber) {
+            if (slideNumber >= 1 && slideNumber <= totalSlides) {
+                const direction = slideNumber > currentSlide ? 'forward' : 'backward';
+                showSlide(slideNumber, direction);
+            }
+        }
+
+        function checkSlideForScroll(slideElement) {
+            if (!slideElement) return;
+
+            const contentHeight = slideElement.scrollHeight;
+            const visibleHeight = slideElement.clientHeight;
+
+            // Todas las diapositivas ahora permiten scroll por defecto
+            // Solo marcamos cuáles tienen contenido largo para mostrar indicador
+            if (contentHeight > visibleHeight * 1.05) { // Umbral más bajo
+                slideElement.dataset.hasScroll = 'true';
+
+                // Mostrar indicador de scroll inmediatamente
+                showScrollIndicator(slideElement);
+            } else {
+                slideElement.dataset.hasScroll = 'false';
+            }
+
+            // NO cambiar apariencia visual - todas se ven igual
+        }
+
+        function showScrollIndicator(slideElement) {
+            // Crear indicador visual de scroll si no existe
+            let indicator = slideElement.querySelector('.scroll-indicator');
+            if (!indicator) {
+                indicator = document.createElement('div');
+                indicator.className = 'scroll-indicator';
+                indicator.innerHTML = '📜 Desplázate para ver más contenido';
+                indicator.style.cssText = `
+                    position: absolute;
+                    bottom: 20px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: rgba(0,0,0,0.9);
+                    color: white;
+                    padding: 12px 20px;
+                    border-radius: 25px;
+                    font-size: 16px;
+                    font-weight: 600;
+                    animation: pulse 2s infinite;
+                    z-index: 1000;
+                    border: 2px solid rgba(255,255,255,0.3);
+                    backdrop-filter: blur(10px);
+                `;
+                slideElement.appendChild(indicator);
+
+                // Ocultar indicador después de 4 segundos
+                setTimeout(() => {
+                    if (indicator.parentNode) {
+                        indicator.style.animation = 'fadeOut 1s ease-out';
+                        setTimeout(() => {
+                            if (indicator.parentNode) {
+                                indicator.remove();
+                            }
+                        }, 1000);
+                    }
+                }, 4000);
+            }
+        }
+
+        function updateSlideIndicator() {
+            document.getElementById('currentSlideNum').textContent = currentSlide;
+            document.getElementById('totalSlidesNum').textContent = totalSlides;
+        }
+
+        function updateProgressBar() {
+            const progressFill = document.getElementById('progressFill');
+            const progress = ((currentSlide - 1) / (totalSlides - 1)) * 100;
+            progressFill.style.width = progress + '%';
+        }
+
+        function toggleTimer() {
+            const timer = document.getElementById('timer');
+            if (timer.style.display === 'none' || timer.style.display === '') {
+                timer.style.display = 'block';
+                if (!isTimerRunning) {
+                    startTimer();
+                }
+            } else {
+                timer.style.display = 'none';
+            }
+        }
+
+        function startTimer() {
+            if (isTimerRunning) return;
+            isTimerRunning = true;
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                const minutes = Math.floor(timeRemaining / 60);
+                const seconds = timeRemaining % 60;
+                document.getElementById('timeDisplay').textContent =
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+                // Cambiar color cuando quedan menos de 2 minutos
+                const timeDisplay = document.getElementById('timeDisplay');
+                if (timeRemaining <= 120) {
+                    timeDisplay.style.color = '#e74c3c';
+                } else if (timeRemaining <= 300) {
+                    timeDisplay.style.color = '#f39c12';
+                } else {
+                    timeDisplay.style.color = '#3498db';
+                }
+
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    isTimerRunning = false;
+                    alert('¡Tiempo agotado! La presentación ha terminado.');
+                    timeDisplay.style.color = '#e74c3c';
+                    timeDisplay.style.animation = 'blink 1s infinite';
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            timeRemaining = 12 * 60;
+            document.getElementById('timeDisplay').textContent = '12:00';
+            document.getElementById('timeDisplay').style.color = '#3498db';
+            document.getElementById('timeDisplay').style.animation = 'none';
+        }
+
+        function togglePresenterMode() {
+            isPresenterMode = !isPresenterMode;
+            document.body.classList.toggle('presenter-mode');
+
+            const particlesContainer = document.getElementById('particles');
+            const navigation = document.querySelector('.navigation');
+
+            if (isPresenterMode) {
+                particlesContainer.style.opacity = '0.3';
+                // Ocultar elementos de control para modo presentador
+                document.querySelector('.controls-panel').style.opacity = '0.3';
+                document.querySelector('.timer-container').style.opacity = '0.3';
+                // Ocultar navegación inferior
+                if (navigation) {
+                    navigation.style.display = 'none';
+                }
+            } else {
+                particlesContainer.style.opacity = '0.6';
+                document.querySelector('.controls-panel').style.opacity = '1';
+                document.querySelector('.timer-container').style.opacity = '1';
+                // Mostrar navegación inferior
+                if (navigation) {
+                    navigation.style.display = 'flex';
+                }
+            }
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().then(() => {
+                    document.body.classList.add('fullscreen-mode');
+                });
+            } else {
+                document.exitFullscreen().then(() => {
+                    document.body.classList.remove('fullscreen-mode');
+                });
+            }
+        }
+
+        function getSlideBackground(slideNumber) {
+            const backgrounds = {
+                1: 'linear-gradient(135deg, #2c3e50 0%, #3498db 100%)',
+                2: 'linear-gradient(135deg, #27ae60 0%, #2ecc71 100%)',
+                6: 'linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%)',
+                10: 'linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%)',
+                12: 'linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%)',
+                15: 'linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%)',
+                17: 'linear-gradient(135deg, #16a085 0%, #27ae60 100%)'
+            };
+            return backgrounds[slideNumber] || 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)';
+        }
+
+        // Funciones interactivas para demos
+        function compileCode() {
+            const input = document.getElementById('codeInput').value.trim();
+            const output = document.getElementById('output');
+
+            // Limpiar salida anterior
+            output.textContent = 'Ejecutando...';
+            output.style.color = '#fff';
+            output.style.borderColor = 'rgba(255,255,255,0.1)';
+
+            if (!input) {
+                output.textContent = '⚠️ Por favor, ingresa código para ejecutar.';
+                output.style.color = '#f39c12';
+                output.style.borderColor = '#f39c12';
+                return;
+            }
+
+            try {
+                // Mini intérprete simple mejorado
+                const result = simpleInterpreter(input);
+                output.textContent = '✅ Ejecución exitosa:\n\n' + result;
+                output.style.color = '#2ecc71';
+                output.style.borderColor = '#2ecc71';
+            } catch (error) {
+                output.textContent = '❌ Error de compilación:\n\n' + error.message;
+                output.style.color = '#e74c3c';
+                output.style.borderColor = '#e74c3c';
+                console.error('Error en mini-compilador:', error);
+            }
+        }
+
+        function simpleInterpreter(code) {
+            const lines = code.split('\n').map(line => line.trim()).filter(line => line);
+            const variables = {};
+            let output = '';
+
+            if (lines.length === 0) {
+                throw new Error('No se encontró código para ejecutar');
+            }
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                try {
+                    if (line.startsWith('var ')) {
+                        // Declaración de variable
+                        const match = line.match(/var\s+(\w+)\s*=\s*(.+);?/);
+                        if (!match) {
+                            throw new Error(`Sintaxis inválida en declaración de variable (línea ${i + 1}). Usa: var nombre = valor;`);
+                        }
+                        const [, varName, value] = match;
+                        if (!/^[a-zA-Z_]\w*$/.test(varName)) {
+                            throw new Error(`Nombre de variable inválido: "${varName}" (línea ${i + 1})`);
+                        }
+                        variables[varName] = evaluateExpression(value, variables);
+                    } else if (line.startsWith('print(')) {
+                        // Función print
+                        const match = line.match(/print\((.+)\);?/);
+                        if (!match) {
+                            throw new Error(`Sintaxis inválida en print (línea ${i + 1}). Usa: print(expresión);`);
+                        }
+                        const value = evaluateExpression(match[1], variables);
+                        output += String(value) + '\n';
+                    } else if (line.trim() !== '') {
+                        throw new Error(`Comando desconocido: "${line}" (línea ${i + 1}). Solo se permiten: var, print`);
+                    }
+                } catch (error) {
+                    throw new Error(`Línea ${i + 1}: ${error.message}`);
+                }
+            }
+
+            return output || 'Código ejecutado correctamente (sin salida de print)';
+        }
+
+        function evaluateExpression(expr, variables) {
+            if (!expr || typeof expr !== 'string') {
+                throw new Error('Expresión vacía o inválida');
+            }
+
+            expr = expr.trim();
+
+            // Remover punto y coma al final si existe
+            if (expr.endsWith(';')) {
+                expr = expr.slice(0, -1).trim();
+            }
+
+            // Si es un número
+            if (!isNaN(expr) && expr !== '') {
+                const num = parseFloat(expr);
+                if (isNaN(num)) {
+                    throw new Error(`Número inválido: ${expr}`);
+                }
+                return num;
+            }
+
+            // Si es una cadena
+            if ((expr.startsWith('"') && expr.endsWith('"')) || (expr.startsWith("'") && expr.endsWith("'"))) {
+                return expr.slice(1, -1);
+            }
+
+            // Si es una variable
+            if (variables[expr] !== undefined) {
+                return variables[expr];
+            }
+
+            // Si es una concatenación de cadenas
+            if (expr.includes('+')) {
+                const parts = expr.split('+').map(p => p.trim());
+                try {
+                    return parts.map(p => evaluateExpression(p, variables)).join('');
+                } catch (error) {
+                    throw new Error(`Error en concatenación: ${error.message}`);
+                }
+            }
+
+            // Si es una operación matemática
+            const operations = expr.split(/\s*([+\-*/])\s*/);
+            if (operations.length === 3) {
+                const [left, op, right] = operations;
+                try {
+                    const leftVal = evaluateExpression(left, variables);
+                    const rightVal = evaluateExpression(right, variables);
+
+                    // Validar tipos para operaciones
+                    if (typeof leftVal === 'string' && typeof rightVal === 'string' && op !== '+') {
+                        throw new Error(`No se puede aplicar '${op}' a cadenas de texto`);
+                    }
+                    if ((typeof leftVal === 'string' || typeof rightVal === 'string') && op !== '+') {
+                        throw new Error(`Operación '${op}' no válida con tipos mixtos`);
+                    }
+
+                    switch (op) {
+                        case '+': return leftVal + rightVal;
+                        case '-': return leftVal - rightVal;
+                        case '*': return leftVal * rightVal;
+                        case '/':
+                            if (rightVal === 0) throw new Error('División por cero');
+                            return leftVal / rightVal;
+                    }
+                } catch (error) {
+                    throw new Error(`Error en operación '${op}': ${error.message}`);
+                }
+            }
+
+            throw new Error(`Expresión no reconocida: "${expr}". Usa números, cadenas entre comillas, variables o operaciones simples.`);
+        }
+
+        function clearDemo() {
+            document.getElementById('codeInput').value = '';
+            document.getElementById('output').textContent = 'Resultado aparecerá aquí...';
+            document.getElementById('output').style.color = '#fff';
+            document.getElementById('output').style.borderColor = 'rgba(255,255,255,0.1)';
+        }
+
+        function loadExample(num) {
+            const examples = {
+                1: `var x = 5;
+var y = 10;
+var suma = x + y;
+print(suma);`,
+                2: `var nombre = "Israel";
+var saludo = "Hola " + nombre;
+print(saludo);
+var numero = 42;
+print("El número es: " + numero);`
+            };
+            document.getElementById('codeInput').value = examples[num];
+        }
+
+        // Demo SQL mejorada
+        function executeSQL() {
+            const input = document.getElementById('sqlInput').value.toUpperCase().trim();
+            const output = document.getElementById('sqlOutput');
+
+            // Base de datos de ejemplo expandida
+            const usuarios = [
+                { id: 1, nombre: "Ana", edad: 25, ciudad: "Bogota" },
+                { id: 2, nombre: "Carlos", edad: 30, ciudad: "Medellin" },
+                { id: 3, nombre: "Maria", edad: 22, ciudad: "Bogota" },
+                { id: 4, nombre: "Pedro", edad: 35, ciudad: "Cali" },
+                { id: 5, nombre: "Laura", edad: 28, ciudad: "Bogota" },
+                { id: 6, nombre: "Juan", edad: 33, ciudad: "Medellin" }
+            ];
+
+            try {
+                let results = [...usuarios];
+
+                if (input.startsWith('SELECT')) {
+                    // Procesar SELECT
+                    if (input.includes('WHERE')) {
+                        const whereClause = input.split('WHERE')[1].trim();
+
+                        // Procesar condiciones WHERE
+                        if (whereClause.includes('EDAD >')) {
+                            const age = parseInt(whereClause.match(/EDAD > (\d+)/)[1]);
+                            results = results.filter(u => u.edad > age);
+                        } else if (whereClause.includes('EDAD <')) {
+                            const age = parseInt(whereClause.match(/EDAD < (\d+)/)[1]);
+                            results = results.filter(u => u.edad < age);
+                        } else if (whereClause.includes('EDAD =')) {
+                            const age = parseInt(whereClause.match(/EDAD = (\d+)/)[1]);
+                            results = results.filter(u => u.edad === age);
+                        } else if (whereClause.includes('CIUDAD =')) {
+                            const cityMatch = whereClause.match(/CIUDAD = '([^']+)'/);
+                            if (cityMatch) {
+                                const city = cityMatch[1].toLowerCase();
+                                results = results.filter(u => u.ciudad.toLowerCase() === city);
+                            }
+                        } else if (whereClause.includes('NOMBRE =')) {
+                            const nameMatch = whereClause.match(/NOMBRE = '([^']+)'/);
+                            if (nameMatch) {
+                                const name = nameMatch[1];
+                                results = results.filter(u => u.nombre === name);
+                            }
+                        }
+                    }
+
+                    // Procesar ORDER BY
+                    if (input.includes('ORDER BY EDAD')) {
+                        results.sort((a, b) => a.edad - b.edad);
+                    } else if (input.includes('ORDER BY NOMBRE')) {
+                        results.sort((a, b) => a.nombre.localeCompare(b.nombre));
+                    }
+
+                    // Formatear resultados
+                    if (input.includes('SELECT NOMBRE') && input.includes('EDAD') && !input.includes('SELECT *')) {
+                        // SELECT nombre, edad
+                        const formatted = results.map(u => `Nombre: ${u.nombre}, Edad: ${u.edad}`).join('\n');
+                        output.textContent = `✅ Consulta ejecutada exitosamente:\n\nResultados:\n${formatted}\n\nTotal: ${results.length} resultado(s)`;
+                    } else if (input.includes('SELECT NOMBRE') && !input.includes('SELECT *')) {
+                        const names = results.map(u => u.nombre);
+                        output.textContent = `✅ Consulta ejecutada exitosamente:\n\nNombres encontrados:\n${names.join('\n')}\n\nTotal: ${names.length} resultado(s)`;
+                    } else if (input.includes('SELECT EDAD') && !input.includes('SELECT *')) {
+                        const ages = results.map(u => u.edad);
+                        output.textContent = `✅ Consulta ejecutada exitosamente:\n\nEdades encontradas:\n${ages.join('\n')}\n\nTotal: ${ages.length} resultado(s)`;
+                    } else {
+                        const formatted = results.map(u => `ID: ${u.id}, Nombre: ${u.nombre}, Edad: ${u.edad}, Ciudad: ${u.ciudad}`).join('\n');
+                        output.textContent = `✅ Consulta ejecutada exitosamente:\n\nResultados:\n${formatted}\n\nTotal: ${results.length} fila(s)`;
+                    }
+                } else {
+                    throw new Error('Solo se soportan consultas SELECT básicas. Ejemplos:\n- SELECT * FROM usuarios\n- SELECT nombre FROM usuarios WHERE edad > 25\n- SELECT * FROM usuarios WHERE ciudad = \'Bogotá\'\n- SELECT nombre FROM usuarios ORDER BY nombre');
+                }
+
+                output.style.color = '#2ecc71';
+                output.style.borderColor = '#2ecc71';
+            } catch (error) {
+                output.textContent = '❌ Error en consulta SQL: ' + error.message;
+                output.style.color = '#e74c3c';
+                output.style.borderColor = '#e74c3c';
+            }
+        }
+
+        function clearSQLDemo() {
+            document.getElementById('sqlInput').value = '';
+            document.getElementById('sqlOutput').textContent = 'Resultado aparecerá aquí...';
+            document.getElementById('sqlOutput').style.color = '#fff';
+            document.getElementById('sqlOutput').style.borderColor = 'rgba(255,255,255,0.1)';
+        }
+
+        function loadSQLExample(num) {
+            const examples = {
+                1: `SELECT nombre FROM usuarios WHERE edad > 24`,
+                2: `SELECT * FROM usuarios WHERE ciudad = 'Bogota'`,
+                3: `SELECT nombre, edad FROM usuarios ORDER BY edad`,
+                4: `SELECT * FROM usuarios WHERE nombre = 'Ana'`
+            };
+            document.getElementById('sqlInput').value = examples[num] || examples[1];
+        }
+
+        // Quiz interactivo con selección múltiple
+        function toggleQuizSelection(element) {
+            // Toggle selección visual
+            element.classList.toggle('selected');
+
+            // Agregar/remover atributo de selección
+            if (element.classList.contains('selected')) {
+                element.setAttribute('data-selected', 'true');
+            } else {
+                element.removeAttribute('data-selected');
+            }
+        }
+
+        function checkMultipleAnswers() {
+            const options = document.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('quizFeedback');
+
+            // Deshabilitar interacciones
+            options.forEach(option => {
+                option.style.pointerEvents = 'none';
+            });
+
+            // Verificar selecciones
+            const selectedCorrect = document.querySelectorAll('.quiz-option[data-selected="true"][data-correct="true"]');
+            const selectedIncorrect = document.querySelectorAll('.quiz-option[data-selected="true"][data-correct="false"]');
+            const unselectedCorrect = document.querySelectorAll('.quiz-option[data-selected]:not([data-selected="true"])[data-correct="true]');
+            const totalCorrectSelected = selectedCorrect.length;
+            const totalIncorrectSelected = selectedIncorrect.length;
+            const totalCorrectUnselected = unselectedCorrect.length;
+
+            // Marcar visualmente todas las opciones
+            options.forEach(option => {
+                const isCorrect = option.getAttribute('data-correct') === 'true';
+                const isSelected = option.getAttribute('data-selected') === 'true';
+
+                if (isCorrect) {
+                    option.classList.add('correct');
+                } else {
+                    option.classList.add('incorrect');
+                }
+            });
+
+            // Feedback basado en selecciones
+            if (totalCorrectSelected === 2 && totalIncorrectSelected === 0) {
+                feedback.className = 'quiz-feedback success';
+                feedback.textContent = '¡Excelente! Has seleccionado correctamente ambas respuestas. Los compiladores traducen todo el código antes de ejecutarlo, mientras que los intérpretes lo ejecutan línea por línea.';
+                feedback.style.display = 'block';
+            } else if (totalCorrectSelected === 1 && totalIncorrectSelected === 0) {
+                feedback.className = 'quiz-feedback warning';
+                feedback.textContent = 'Casi correcto. Has seleccionado una respuesta correcta, pero te faltó la otra. Las dos primeras opciones son correctas.';
+                feedback.style.display = 'block';
+            } else if (totalCorrectSelected > 0 && totalIncorrectSelected > 0) {
+                feedback.className = 'quiz-feedback warning';
+                feedback.textContent = 'Parcialmente correcto. Has seleccionado al menos una respuesta correcta, pero también seleccionaste opciones incorrectas. Solo las dos primeras son correctas.';
+                feedback.style.display = 'block';
+            } else {
+                feedback.className = 'quiz-feedback error';
+                feedback.textContent = 'Incorrecto. Las opciones correctas son las dos primeras: los compiladores traducen todo el código antes de ejecutarlo, y los intérpretes ejecutan el código línea por línea.';
+                feedback.style.display = 'block';
+            }
+        }
+
+        function resetQuiz() {
+            const options = document.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('quizFeedback');
+
+            // Limpiar todas las selecciones
+            options.forEach(option => {
+                option.classList.remove('selected', 'correct', 'incorrect');
+                option.removeAttribute('data-selected');
+                option.style.pointerEvents = 'auto';
+            });
+
+            // Ocultar feedback
+            if (feedback) {
+                feedback.style.display = 'none';
+            }
+        }
+
+        function toggleOverview(targetSlide = null) {
+            isOverviewMode = !isOverviewMode;
+            const container = document.querySelector('.presentation-container');
+
+            if (isOverviewMode) {
+                // Ocultar diapositivas normales y mostrar vista general
+                const slides = container.querySelectorAll('.slide');
+                slides.forEach(slide => slide.classList.add('hidden-in-overview'));
+
+                // Crear vista general
+                showOverview();
+            } else {
+                // Mostrar diapositivas normales y ocultar vista general
+                container.classList.remove('overview-mode');
+                const overviewGrid = container.querySelector('.overview-grid');
+                if (overviewGrid) {
+                    overviewGrid.remove();
+                }
+
+                // Mostrar diapositivas normales
+                const slides = container.querySelectorAll('.slide');
+                slides.forEach(slide => slide.classList.remove('hidden-in-overview'));
+
+                // Ir a la diapositiva objetivo si se especificó, o a la actual
+                const slideToShow = targetSlide || currentSlide;
+                showSlide(slideToShow);
+            }
+        }
+
+        function showOverview() {
+            const container = document.querySelector('.presentation-container');
+
+            // Aplicar clase de modo overview al contenedor
+            container.classList.add('overview-mode');
+
+            // Crear grid de miniaturas
+            const overviewGrid = document.createElement('div');
+            overviewGrid.className = 'overview-grid';
+
+            for (let i = 1; i <= totalSlides; i++) {
+                const slide = document.createElement('div');
+                slide.className = 'overview-slide';
+                slide.style.background = getSlideBackground(i);
+                slide.textContent = `Diapositiva ${i}`;
+                slide.onclick = (event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    toggleOverview(i);
+                };
+                overviewGrid.appendChild(slide);
+            }
+
+            container.appendChild(overviewGrid);
+        }
+
+        // Inicializar primera diapositiva
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            setupKeyboardControls();
+            // La primera diapositiva ya tiene la clase 'active' por defecto
+            updateSlideIndicator();
+            updateProgressBar();
+            checkAllSlidesForScroll();
+        });
+    </script>
+</body>
+</html>

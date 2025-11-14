@@ -1,0 +1,105 @@
+El alumno deberá haber realizado el presente trabajo de acuerdo a las normas del Instituto del Sur
+1
+ESPECIALIDAD
+DSI
+TÍTULO DEL TRABAJO
+Tarea - Requerimientos del software
+CURSO
+[2025-2] INGENIERÍA DE SOFTWARE AVANZADA [5305A]
+PROFESOR
+JESAMIN MELISSA ZEVALLOS QUISPE
+AUTOR
+ISRAEL DAVID VELASQUEZ GONZALES
+SEMESTRE
+5
+AÑO – GRUPO
+2025-2
+_____________ ______________
+ Firma Firma
+____________________________________________________________
+EVALUACIÓN TRABAJO ESCRITO:
+Contenido : ___ Comentarios: ___________________
+Trabajo Completo : ___ ______________________________
+Presentación : ___ ______________________________
+Ortografía y Redacción : ___ ______________________________
+Otros : ___ ______________________________
+______________________________
+Nota Final : ___ ______________________________
+El alumno deberá haber realizado el presente trabajo de acuerdo a las normas del Instituto del Sur
+2
+INDICE:
+1. Requerimientos Funcionales (RF)
+2. Requerimientos No Funcionales (RNF)
+El alumno deberá haber realizado el presente trabajo de acuerdo a las normas del Instituto del Sur
+3
+1. Requerimientos Funcionales (RF)
+Los requerimientos funcionales describen las funcionalidades especificas que el
+sistema se debe implementar.
+• RF1: Registro y Autenticación de Usuarios
+Los usuarios deben poder registrarse con email, teléfono o redes sociales, y
+autenticarse para proceder con el pago, la interacción con la app es libre.
+Debe incluir recuperación de contraseña.
+• RF2: Exploración de Restaurantes
+La app debe mostrar una lista de restaurantes cercanos basada en la
+ubicación GPS del usuario, con filtros por tipo de comida, distancia y
+calificaciones.
+• RF3: Visualización de Menús
+Cada restaurante debe tener un menú detallado con platos, descripciones,
+precios, imágenes y opciones personalizables.
+• RF4: Carrito de Compras
+Los usuarios deben poder agregar platos al carrito, modificar cantidades,
+aplicar descuentos y calcular el total con propinas y delivery.
+• RF5: Proceso de Checkout
+El sistema debe permitir seleccionar método de pago (tarjeta, efectivo,
+billeteras digitales), dirección de entrega y confirmar el pedido.
+• RF6: Seguimiento de Pedidos
+Los usuarios deben poder rastrear el estado del pedido en tiempo real
+(preparando, en camino, entregado) con actualizaciones vía notificaciones
+de la página web o aplicativo.
+• RF7: Gestión de Restaurantes
+Los restaurantes deben tener un panel para actualizar menús, gestionar
+pedidos entrantes y confirmar entregas.
+• RF8: Valoraciones y Reseñas
+Después de la entrega a delivery o recoger en local, los usuarios deben
+poder calificar el restaurante, el pedido y dejar comentarios.
+• RF9: Búsqueda y Filtros Avanzados
+La app debe incluir búsqueda por nombre de plato o restaurante, filtros por
+precio, tiempo de entrega y opciones dietéticas (vegetariano, vegano).
+• RF10: Integración con Servicios Externos
+El sistema debe integrarse con APIs de mapas (ej. Google Maps) para
+ubicación, servicios de pago y mensajería para notificaciones.
+El alumno deberá haber realizado el presente trabajo de acuerdo a las normas del Instituto del Sur
+4
+2. Requerimientos No Funcionales (RNF)
+• RNF1: Rendimiento
+El tiempo de carga de menús y búsqueda de restaurantes no debe exceder
+1.5 segundos. El seguimiento de pedidos debe actualizarse en menos de 5
+segundos.
+• RNF2: Seguridad
+Debe implementar encriptación de datos sensibles (pagos, ubicaciones),
+autenticación multifactor y protección contra fraudes en transacciones.
+• RNF3: Usabilidad
+La interfaz debe ser intuitiva para usuarios móviles, con navegación por
+gestos, y accesible para personas con discapacidades.
+• RNF4: Escalabilidad
+El sistema debe manejar hasta 10,000 usuarios concurrentes y 500
+restaurantes activos sin degradación (en prototipo será limitado para
+presentar).
+• RNF5: Compatibilidad
+Compatible con iOS, Android y web, soportando versiones recientes de
+sistemas operativos.
+• RNF6: Mantenibilidad
+Código modular con documentación para facilitar actualizaciones, como
+agregar nuevos métodos de pago.
+• RNF7: Disponibilidad
+Disponibilidad del 99.9% para pedidos críticos, con respaldo en caso de
+fallos.
+• RNF8: Portabilidad
+Desplegable en la nube (ej. AWS, Azure) con bases de datos escalables
+(MongoDB, PostgreSQL). (en lo que se quiere, pero por momento postgres)
+• RNF9: Eficiencia Energética
+Optimizada para móviles, minimizando uso de batería en GPS y
+notificaciones.
+• RNF10: Cumplimiento Normativo
+Cumplir con leyes de protección de datos (GDPR, CCPA) y regulaciones de
+alimentos para delivery.
