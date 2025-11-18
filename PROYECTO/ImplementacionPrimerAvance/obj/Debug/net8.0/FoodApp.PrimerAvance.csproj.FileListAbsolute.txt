@@ -204,3 +204,4 @@ D:\old\Israel PC OLD\INGENEDADVANCE\PROYECTO\ImplementacionPrimerAvance\obj\Debu
 D:\old\Israel PC OLD\INGENEDADVANCE\PROYECTO\ImplementacionPrimerAvance\obj\Debug\net8.0\FoodApp.PrimerAvance.pdb
 D:\old\Israel PC OLD\INGENEDADVANCE\PROYECTO\ImplementacionPrimerAvance\obj\Debug\net8.0\FoodApp.PrimerAvance.genruntimeconfig.cache
 D:\old\Israel PC OLD\INGENEDADVANCE\PROYECTO\ImplementacionPrimerAvance\obj\Debug\net8.0\ref\FoodApp.PrimerAvance.dll
+D:\old\Israel PC OLD\INGENEDADVANCE\PROYECTO\ImplementacionPrimerAvance\obj\Debug\net8.0\FoodApp.PrimerAvance.sourcelink.json

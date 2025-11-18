@@ -35,29 +35,32 @@
 
 @section Scripts {
     <script>
+        const productosData = @Html.Raw(Model.ProductosJson);
+
         function verMenu(restauranteId) {
-            // Simulación de carga de menú (en producción, sería una API call)
-            const productos = [
-                { nombre: 'Pizza Margherita', precio: 15.99, descripcion: 'Pizza clásica con queso y tomate' },
-                { nombre: 'Hamburguesa', precio: 12.50, descripcion: 'Hamburguesa con papas' },
-                { nombre: 'Ensalada César', precio: 8.99, descripcion: 'Ensalada fresca con aderezo' }
-            ];
+            const productos = productosData[restauranteId] || [];
             const container = document.getElementById('productos');
             container.innerHTML = '';
-            productos.forEach(p => {
-                container.innerHTML += `
-                    <div class="col-md-4 mb-3">
-                        <div class="card">
-                            <div class="card-body">
-                                <h6 class="card-title">${p.nombre}</h6>
-                                <p class="card-text">${p.descripcion}</p>
-                                <p class="card-text"><strong>S/ ${p.precio}</strong></p>
-                                <button class="btn btn-success" onclick="agregarAlCarrito('${p.nombre}', ${p.precio})">Agregar al Carrito</button>
+            if (productos.length === 0) {
+                container.innerHTML = '<p>No hay productos disponibles para este restaurante.</p>';
+            } else {
+                productos.forEach(p => {
+                    container.innerHTML += `
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title">${p.nombre}</h6>
+                                    <p class="card-text">${p.descripcion || 'Sin descripción'}</p>
+                                    <p class="card-text"><strong>S/ ${p.precio}</strong></p>
+                                    <p class="card-text small">Categoría: ${p.categoria || 'General'}</p>
+                                    ${p.opcionesDieteticas && p.opcionesDieteticas.length > 0 ? `<p class="card-text small">Opciones: ${p.opcionesDieteticas.join(', ')}</p>` : ''}
+                                    <button class="btn btn-success" onclick="agregarAlCarrito('${p.nombre}', ${p.precio})" ${!p.disponible ? 'disabled' : ''}>Agregar al Carrito</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `;
-            });
+                    `;
+                });
+            }
             document.getElementById('menuContainer').style.display = 'block';
         }
 

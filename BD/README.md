@@ -11,4 +11,8 @@ Esta carpeta contiene scripts SQL para configurar la base de datos PostgreSQL de
 1. **Opción Recomendada:** Ejecuta `setup_database.sql` en pgAdmin (crea todo de una vez).
 2. O ejecuta `create_database.sql` + luego usa EF Core: `dotnet ef database update`.
 
-**Para presentación del 50%:** Solo necesitas ejecutar `setup_database.sql` y ya tendrás restaurantes y productos en la DB.
+**Estado Actual: 100% de Integración DB Completada**
+- Restaurantes cargados desde BD ✅
+- Productos cargados desde BD ✅
+- Frontend actualizado para mostrar productos dinámicos desde BD ✅
+- Datos de prueba incluidos en setup_database.sql ✅
