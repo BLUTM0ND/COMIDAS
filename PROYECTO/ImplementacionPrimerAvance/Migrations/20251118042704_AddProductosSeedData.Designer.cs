@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using FoodApp.PrimerAvance.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FoodApp.PrimerAvance.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251118042704_AddProductosSeedData")]
+    partial class AddProductosSeedData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -310,7 +313,7 @@ namespace FoodApp.PrimerAvance.Migrations
                             Id = new Guid("3708cfb0-1263-41ec-8e4f-58bec7d860e1"),
                             Calificacion = 4.7999999999999998,
                             Estado = 0,
-                            FechaCreacion = new DateTime(2025, 11, 18, 4, 27, 39, 716, DateTimeKind.Utc).AddTicks(3689),
+                            FechaCreacion = new DateTime(2025, 11, 18, 4, 27, 2, 695, DateTimeKind.Utc).AddTicks(5121),
                             NombreComercial = "Sushi Express",
                             TiempoEntrega = 25
                         },
@@ -319,7 +322,7 @@ namespace FoodApp.PrimerAvance.Migrations
                             Id = new Guid("f354ed19-48c6-4de0-a081-f39c6220eaaf"),
                             Calificacion = 4.5,
                             Estado = 0,
-                            FechaCreacion = new DateTime(2025, 11, 18, 4, 27, 39, 716, DateTimeKind.Utc).AddTicks(3692),
+                            FechaCreacion = new DateTime(2025, 11, 18, 4, 27, 2, 695, DateTimeKind.Utc).AddTicks(5134),
                             NombreComercial = "Pizzeria Italiana",
                             TiempoEntrega = 30
                         });

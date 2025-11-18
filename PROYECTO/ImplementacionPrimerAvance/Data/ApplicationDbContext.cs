@@ -42,14 +42,14 @@ public class ApplicationDbContext : DbContext
 
         modelBuilder.Entity<Producto>().HasData(
             // Productos de Sushi Express
-            new Producto { Id = Guid.NewGuid(), RestauranteId = restaurante1Id, Nombre = "Sushi Roll California", Descripcion = "Roll de sushi con aguacate, pepino y cangrejo", Precio = 12.50m, Categoria = "Sushi", Disponible = true, OpcionesDieteticas = new List<string> { "Vegetariano" } },
-            new Producto { Id = Guid.NewGuid(), RestauranteId = restaurante1Id, Nombre = "Sashimi de Salmón", Descripcion = "Fresco sashimi de salmón noruego", Precio = 15.00m, Categoria = "Sashimi", Disponible = true, OpcionesDieteticas = new List<string> { "Sin gluten" } },
-            new Producto { Id = Guid.NewGuid(), RestauranteId = restaurante1Id, Nombre = "Tempura de Camarón", Descripcion = "Camarones rebozados y fritos", Precio = 10.00m, Categoria = "Tempura", Disponible = true, OpcionesDieteticas = new List<string> { "Sin gluten" } },
+            new Producto { Id = Guid.Parse("550e8400-e29b-41d4-a716-446655440000"), RestauranteId = restaurante1Id, Nombre = "Sushi Roll California", Descripcion = "Roll de sushi con aguacate, pepino y cangrejo", Precio = 12.50m, Categoria = "Sushi", Disponible = true, OpcionesDieteticas = new List<string> { "Vegetariano" } },
+            new Producto { Id = Guid.Parse("550e8400-e29b-41d4-a716-446655440001"), RestauranteId = restaurante1Id, Nombre = "Sashimi de Salmón", Descripcion = "Fresco sashimi de salmón noruego", Precio = 15.00m, Categoria = "Sashimi", Disponible = true, OpcionesDieteticas = new List<string> { "Sin gluten" } },
+            new Producto { Id = Guid.Parse("550e8400-e29b-41d4-a716-446655440002"), RestauranteId = restaurante1Id, Nombre = "Tempura de Camarón", Descripcion = "Camarones rebozados y fritos", Precio = 10.00m, Categoria = "Tempura", Disponible = true, OpcionesDieteticas = new List<string> { "Sin gluten" } },
 
             // Productos de Pizzeria Italiana
-            new Producto { Id = Guid.NewGuid(), RestauranteId = restaurante2Id, Nombre = "Pizza Margherita", Descripcion = "Pizza clásica con mozzarella, tomate y albahaca", Precio = 14.00m, Categoria = "Pizza", Disponible = true, OpcionesDieteticas = new List<string> { "Vegetariano" } },
-            new Producto { Id = Guid.NewGuid(), RestauranteId = restaurante2Id, Nombre = "Pasta Carbonara", Descripcion = "Pasta con salsa carbonara tradicional", Precio = 13.50m, Categoria = "Pasta", Disponible = true, OpcionesDieteticas = new List<string> { "Sin gluten opcional" } },
-            new Producto { Id = Guid.NewGuid(), RestauranteId = restaurante2Id, Nombre = "Lasagna Bolognese", Descripcion = "Lasagna casera con carne y salsa boloñesa", Precio = 16.00m, Categoria = "Pasta", Disponible = true, OpcionesDieteticas = new List<string> { "Sin gluten opcional" } }
+            new Producto { Id = Guid.Parse("550e8400-e29b-41d4-a716-446655440003"), RestauranteId = restaurante2Id, Nombre = "Pizza Margherita", Descripcion = "Pizza clásica con mozzarella, tomate y albahaca", Precio = 14.00m, Categoria = "Pizza", Disponible = true, OpcionesDieteticas = new List<string> { "Vegetariano" } },
+            new Producto { Id = Guid.Parse("550e8400-e29b-41d4-a716-446655440004"), RestauranteId = restaurante2Id, Nombre = "Pasta Carbonara", Descripcion = "Pasta con salsa carbonara tradicional", Precio = 13.50m, Categoria = "Pasta", Disponible = true, OpcionesDieteticas = new List<string> { "Sin gluten opcional" } },
+            new Producto { Id = Guid.Parse("550e8400-e29b-41d4-a716-446655440005"), RestauranteId = restaurante2Id, Nombre = "Lasagna Bolognese", Descripcion = "Lasagna casera con carne y salsa boloñesa", Precio = 16.00m, Categoria = "Pasta", Disponible = true, OpcionesDieteticas = new List<string> { "Sin gluten opcional" } }
         );
     }
 }
