@@ -10,6 +10,16 @@
     <h1 class="text-center my-4">Bienvenido a la App de Pedidos de Comida</h1>
     <p class="text-center">Explora restaurantes y realiza pedidos fácilmente.</p>
 
+    <!-- Carrito flotante -->
+    <div id="carritoFlotante" class="position-fixed top-0 end-0 m-3" style="display:none; z-index: 1000;">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="card-title">Carrito <span id="carritoContador" class="badge bg-primary">0</span></h6>
+                <button class="btn btn-sm btn-outline-primary" onclick="verCarrito()">Ver Carrito</button>
+            </div>
+        </div>
+    </div>
+
     <h2>Restaurantes Disponibles</h2>
     <div class="row">
         @foreach (var restaurante in Model.Restaurantes)
@@ -31,11 +41,42 @@
         <h2>Menú del Restaurante</h2>
         <div id="productos" class="row"></div>
     </div>
+
+    <!-- Modal del Carrito -->
+    <div class="modal fade" id="carritoModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tu Carrito</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="carritoItems"></div>
+                    <div id="carritoTotal" class="mt-3 fw-bold"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-success" onclick="realizarPedido()">Realizar Pedido</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {
     <script>
         const productosData = @Html.Raw(Model.ProductosJson);
+        let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+
+        // Actualizar contador del carrito
+        function actualizarCarritoUI() {
+            const contador = document.getElementById('carritoContador');
+            const totalItems = carrito.reduce((sum, item) => sum + item.cantidad, 0);
+            contador.textContent = totalItems;
+            document.getElementById('carritoFlotante').style.display = totalItems > 0 ? 'block' : 'none';
+        }
 
         function verMenu(restauranteId) {
             const productos = productosData[restauranteId] || [];
@@ -54,7 +95,7 @@
                                     <p class="card-text"><strong>S/ ${p.precio}</strong></p>
                                     <p class="card-text small">Categoría: ${p.categoria || 'General'}</p>
                                     ${p.opcionesDieteticas && p.opcionesDieteticas.length > 0 ? `<p class="card-text small">Opciones: ${p.opcionesDieteticas.join(', ')}</p>` : ''}
-                                    <button class="btn btn-success" onclick="agregarAlCarrito('${p.nombre}', ${p.precio})" ${!p.disponible ? 'disabled' : ''}>Agregar al Carrito</button>
+                                    <button class="btn btn-success" onclick="agregarAlCarrito('${p.id}', '${p.nombre}', ${p.precio})" ${!p.disponible ? 'disabled' : ''}>Agregar al Carrito</button>
                                 </div>
                             </div>
                         </div>
@@ -64,9 +105,65 @@
             document.getElementById('menuContainer').style.display = 'block';
         }
 
-        function agregarAlCarrito(nombre, precio) {
+        function agregarAlCarrito(id, nombre, precio) {
+            const itemExistente = carrito.find(item => item.id === id);
+            if (itemExistente) {
+                itemExistente.cantidad++;
+            } else {
+                carrito.push({ id, nombre, precio, cantidad: 1 });
+            }
+            localStorage.setItem('carrito', JSON.stringify(carrito));
+            actualizarCarritoUI();
             alert(`Agregado: ${nombre} - S/ ${precio}`);
-            // Aquí iría la lógica para agregar al carrito (usando JS o enviando a backend)
         }
+
+        function verCarrito() {
+            const itemsContainer = document.getElementById('carritoItems');
+            const totalContainer = document.getElementById('carritoTotal');
+            itemsContainer.innerHTML = '';
+            let total = 0;
+
+            if (carrito.length === 0) {
+                itemsContainer.innerHTML = '<p>Tu carrito está vacío.</p>';
+            } else {
+                carrito.forEach((item, index) => {
+                    const subtotal = item.precio * item.cantidad;
+                    total += subtotal;
+                    itemsContainer.innerHTML += `
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div>
+                                <strong>${item.nombre}</strong><br>
+                                <small>S/ ${item.precio} x ${item.cantidad} = S/ ${subtotal.toFixed(2)}</small>
+                            </div>
+                            <button class="btn btn-sm btn-outline-danger" onclick="removerDelCarrito(${index})">Quitar</button>
+                        </div>
+                    `;
+                });
+            }
+            totalContainer.innerHTML = `<h5>Total: S/ ${total.toFixed(2)}</h5>`;
+            $('#carritoModal').modal('show');
+        }
+
+        function removerDelCarrito(index) {
+            carrito.splice(index, 1);
+            localStorage.setItem('carrito', JSON.stringify(carrito));
+            actualizarCarritoUI();
+            verCarrito(); // Recargar modal
+        }
+
+        function realizarPedido() {
+            if (carrito.length === 0) {
+                alert('Tu carrito está vacío.');
+                return;
+            }
+            alert('Pedido realizado exitosamente. (Funcionalidad completa próximamente)');
+            carrito = [];
+            localStorage.removeItem('carrito');
+            actualizarCarritoUI();
+            $('#carritoModal').modal('hide');
+        }
+
+        // Inicializar UI del carrito al cargar
+        document.addEventListener('DOMContentLoaded', actualizarCarritoUI);
     </script>
 }
