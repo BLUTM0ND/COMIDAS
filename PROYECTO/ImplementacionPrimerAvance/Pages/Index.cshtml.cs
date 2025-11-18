@@ -21,9 +21,13 @@ namespace FoodApp.PrimerAvance.Pages
         {
             // Cargar restaurantes desde la base de datos
             Restaurantes = _context.Restaurantes.ToList();
+            Console.WriteLine($"Restaurantes cargados: {Restaurantes.Count}");
 
             // Cargar productos desde la base de datos y agrupar por restaurante
-            var productosPorRestaurante = _context.Productos
+            var productos = _context.Productos.ToList();
+            Console.WriteLine($"Productos totales en BD: {productos.Count}");
+
+            var productosPorRestaurante = productos
                 .GroupBy(p => p.RestauranteId)
                 .ToDictionary(g => g.Key.ToString(), g => g.Select(p => new
                 {
@@ -37,6 +41,7 @@ namespace FoodApp.PrimerAvance.Pages
                 }).ToList());
 
             ProductosJson = JsonSerializer.Serialize(productosPorRestaurante);
+            Console.WriteLine($"ProductosJson: {ProductosJson}");
         }
     }
 }
